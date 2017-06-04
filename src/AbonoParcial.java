@@ -17,17 +17,41 @@ public class AbonoParcial extends Abono{
 
     @Override
     float costePrimerCuatrimestre() {
-        if
+        if(super.getMesDeAlta().getNumeroMes()<=4 && super.getElAbonado().isEmpadronado()){
+            return super.getMesDeAlta().getMensualidades()*TipoAbono.PY.getCoste();
+        }
+        else if(super.getMesDeAlta().getNumeroMes()<=4 && !super.getElAbonado().isEmpadronado()){
+            return super.getMesDeAlta().getMensualidades()*TipoAbono.PN.getCoste();
+        }
+        else{
+            return 0;
+        }
     }
 
     @Override
     float costeSegundoCuatrimestre() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(super.getMesDeAlta().getNumeroMes()>4 && super.getMesDeAlta().getNumeroMes()<9 && super.getElAbonado().isEmpadronado()){
+            return super.getMesDeAlta().getMensualidades()*TipoAbono.PY.getCoste();
+        }
+        else if(super.getMesDeAlta().getNumeroMes()>4 && super.getMesDeAlta().getNumeroMes()<9 && !super.getElAbonado().isEmpadronado()){
+            return super.getMesDeAlta().getMensualidades()*TipoAbono.PN.getCoste();
+        }
+        else{
+            return 0;
+        }
     }
 
     @Override
     float costeTercerCuatrimestre() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(super.getMesDeAlta().getNumeroMes() > 8 && super.getMesDeAlta().getNumeroMes() < 12 && super.getElAbonado().isEmpadronado()){
+            return super.getMesDeAlta().getMensualidades()*TipoAbono.PY.getCoste();
+        }
+        else if(super.getMesDeAlta().getNumeroMes() > 8 && super.getMesDeAlta().getNumeroMes() < 12 && !super.getElAbonado().isEmpadronado()){
+            return super.getMesDeAlta().getMensualidades()*TipoAbono.PN.getCoste();
+        }
+        else{
+            return 0;
+        }
     }
     
 }
