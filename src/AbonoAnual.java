@@ -13,28 +13,20 @@ public class AbonoAnual extends Abono{
     public AbonoAnual(Ciudadano c) {
         super.setElAbonado(c);
     }
-    
-    public float coste(){
-        if(super.getElAbonado().isEmpadronado()){
-            return TipoAbono.AY.getCoste();
-        }else{
-            return TipoAbono.AN.getCoste();
-        }
-    }
 
     @Override
     float costePrimerCuatrimestre() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return super.getTipo().getCoste();
     }
 
     @Override
     float costeSegundoCuatrimestre() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     @Override
     float costeTercerCuatrimestre() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
     
 }
