@@ -1,6 +1,12 @@
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -37,6 +43,8 @@ public class Ventana extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
+        buttonGroup4 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -121,6 +129,11 @@ public class Ventana extends javax.swing.JFrame {
 
         jComboBoxMeses.setModel(new DefaultComboBoxModel(Meses.values()));
         jComboBoxMeses.setSelectedItem(null);
+        jComboBoxMeses.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxMesesActionPerformed(evt);
+            }
+        });
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Tipo de abono"));
 
@@ -196,8 +209,7 @@ public class Ventana extends javax.swing.JFrame {
                                     .addComponent(jTextFieldDni)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(75, 75, 75)
@@ -254,11 +266,11 @@ public class Ventana extends javax.swing.JFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Empadronado"));
 
-        buttonGroup1.add(jRadioButtonSiConsulta);
+        buttonGroup3.add(jRadioButtonSiConsulta);
         jRadioButtonSiConsulta.setText("SI");
         jRadioButtonSiConsulta.setEnabled(false);
 
-        buttonGroup1.add(jRadioButtonNoConsulta);
+        buttonGroup3.add(jRadioButtonNoConsulta);
         jRadioButtonNoConsulta.setText("NO");
         jRadioButtonNoConsulta.setEnabled(false);
 
@@ -285,11 +297,11 @@ public class Ventana extends javax.swing.JFrame {
 
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Tipo de abono"));
 
-        buttonGroup2.add(jRadioButtonParcialConsulta);
+        buttonGroup4.add(jRadioButtonParcialConsulta);
         jRadioButtonParcialConsulta.setText("Abono parcial");
         jRadioButtonParcialConsulta.setEnabled(false);
 
-        buttonGroup2.add(jRadioButtonAnualConsulta);
+        buttonGroup4.add(jRadioButtonAnualConsulta);
         jRadioButtonAnualConsulta.setText("Abono anual");
         jRadioButtonAnualConsulta.setEnabled(false);
 
@@ -466,14 +478,32 @@ public class Ventana extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAceptarActionPerformed
-//        comprobar();
+        try {
+            comprobar();
 //        procesar();
-        limpiar();
+            limpiarPeticion();
+        } catch (MyException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+            JComponent componente=ex.getComponente();
+            componente.requestFocus();
+        }
     }//GEN-LAST:event_jButtonAceptarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        limpiar();
+        limpiarPeticion();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
+
+    private void jComboBoxMesesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxMesesActionPerformed
+        if(jComboBoxMeses.getSelectedIndex()==0){
+            jRadioButtonAnual.setEnabled(true);
+            jRadioButtonParcial.setEnabled(true);
+            buttonGroup2.clearSelection();
+        }else{
+            jRadioButtonAnual.setEnabled(false);
+            jRadioButtonParcial.setEnabled(false);
+            jRadioButtonParcial.setSelected(true);
+        }
+    }//GEN-LAST:event_jComboBoxMesesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -513,6 +543,8 @@ public class Ventana extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
     private javax.swing.JButton jButtonAceptar;
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JComboBox jComboBox2;
@@ -559,13 +591,25 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldNombre;
     // End of variables declaration//GEN-END:variables
 
-    private void limpiar() {
+    private void limpiarPeticion() {
         jTextFieldDni.setText(null);
         jTextFieldNombre.setText(null);
-        jRadioButtonSi.setSelected(false);
-        jRadioButtonNo.setSelected(false);
-        jRadioButtonAnual.setSelected(false);
+        buttonGroup1.clearSelection();
         jRadioButtonParcial.setSelected(true);
         jComboBoxMeses.setSelectedItem(null);
+    }
+
+    private void comprobar() throws MyException {
+        if(!Pattern.matches("[0-9]{8}[ABCDEFGHIJKLMNOPQRSTUVWXYZ]{1}", jTextFieldDni.getText().toUpperCase())){
+            throw new MyException(jTextFieldDni, "El dni introducido es incorrecto");
+        }if(!Pattern.matches("[ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]{1,} [ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]{1,} [ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]{1,}||[ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]{1,} [ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]{1,} [ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]{1,} [ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]{1,}", jTextFieldNombre.getText().toUpperCase())){
+            throw new MyException(jTextFieldNombre, "El nombre introducido es incorrecto");
+        }if(!jRadioButtonSi.isSelected()&&!jRadioButtonNo.isSelected()){
+            throw new MyException(jRadioButtonSi, "Debes seleccionar si esta empadronado");
+        }if(jComboBoxMeses.getSelectedItem()==null){
+            throw new MyException(jComboBoxMeses, "Debes seleccionar un mes");
+        }if(!jRadioButtonAnual.isSelected()&&!jRadioButtonParcial.isSelected()){
+            throw new MyException(jRadioButtonParcial, "Debes seleccionar el tipo de abono");
+        }
     }
 }
